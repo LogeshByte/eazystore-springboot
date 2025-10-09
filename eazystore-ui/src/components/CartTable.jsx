@@ -72,7 +72,7 @@ export default function CartTable() {
                 />
               </td>
               <td className="px-4 sm:px-6 py-4 text-base font-light">
-                ${item.price.toFixed(2)}
+                ${(item.price * item.quantity).toFixed(2)}
               </td>
               <td className="px-4 sm:px-6 py-4">
                 <button
