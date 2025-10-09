@@ -14,8 +14,12 @@ public class PublicPathConfig {
               "/api/v1/products/**",
               "/api/v1/contacts/**",
               "/api/v1/auth/**",
+              "/api/v1/profile/**",
+              "/api/v1/orders/**",
               "/error",
-              "/api/v1/csrf-token"
+              "/api/v1/csrf-token",
+              "/eazystore/actuator/health",
+              "/eazystore/actuator/health/**"
       );
     };
 

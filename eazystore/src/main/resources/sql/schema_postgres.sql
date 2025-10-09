@@ -1,6 +1,8 @@
+-- PostgreSQL Schema for EazyStore
+
 CREATE TABLE IF NOT EXISTS products (
     product_id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(250) NOT NULL,
+    name VARCHAR(250) NOT NULL UNIQUE,
     description VARCHAR(500) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     popularity INT NOT NULL,
@@ -12,7 +14,7 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 CREATE TABLE IF NOT EXISTS contacts (
-    contact_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    contact_id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     mobile_number VARCHAR(15) NOT NULL,
@@ -25,21 +27,19 @@ CREATE TABLE IF NOT EXISTS contacts (
 );
 
 CREATE TABLE IF NOT EXISTS customers (
-    customer_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    customer_id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    mobile_number VARCHAR(15) NOT NULL,
+    mobile_number VARCHAR(15) NOT NULL UNIQUE,
     password_hash VARCHAR(500) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by VARCHAR(20) NOT NULL,
     updated_at TIMESTAMP DEFAULT NULL,
-    updated_by VARCHAR(20) DEFAULT NULL,
-    UNIQUE KEY unique_email (email),
-    UNIQUE KEY unique_mobile_number (mobile_number)
+    updated_by VARCHAR(20) DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS address (
-    address_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    address_id BIGSERIAL PRIMARY KEY,
     customer_id BIGINT NOT NULL UNIQUE,
     street VARCHAR(150) NOT NULL,
     city VARCHAR(100) NOT NULL,
@@ -54,13 +54,12 @@ CREATE TABLE IF NOT EXISTS address (
 );
 
 CREATE TABLE IF NOT EXISTS roles (
-    role_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    role_id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by VARCHAR(20) NOT NULL,
     updated_at TIMESTAMP DEFAULT NULL,
-    updated_by VARCHAR(20) DEFAULT NULL,
-    UNIQUE KEY unique_name (name)
+    updated_by VARCHAR(20) DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS customer_roles (
@@ -71,13 +70,14 @@ CREATE TABLE IF NOT EXISTS customer_roles (
     FOREIGN KEY (role_id) REFERENCES roles (role_id) ON DELETE CASCADE
 );
 
+-- Insert default roles
 INSERT INTO
     roles (name, created_at, created_by)
 VALUES (
         'ROLE_USER',
         CURRENT_TIMESTAMP,
         'DBA'
-    );
+    ) ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO
     roles (name, created_at, created_by)
@@ -85,7 +85,7 @@ VALUES (
         'ROLE_ADMIN',
         CURRENT_TIMESTAMP,
         'DBA'
-    );
+    ) ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO
     roles (name, created_at, created_by)
@@ -93,7 +93,7 @@ VALUES (
         'ROLE_OPS_ENG',
         CURRENT_TIMESTAMP,
         'DBA'
-    );
+    ) ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO
     roles (name, created_at, created_by)
@@ -101,10 +101,10 @@ VALUES (
         'ROLE_QA_ENG',
         CURRENT_TIMESTAMP,
         'DBA'
-    );
+    ) ON CONFLICT (name) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS orders (
-    order_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGSERIAL PRIMARY KEY,
     customer_id BIGINT NOT NULL,
     total_price DECIMAL(10, 2) NOT NULL,
     payment_id VARCHAR(200) NOT NULL,
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 CREATE TABLE IF NOT EXISTS order_items (
-    order_item_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_item_id BIGSERIAL PRIMARY KEY,
     order_id BIGINT NOT NULL,
     product_id BIGINT NOT NULL,
     quantity INT NOT NULL,
