@@ -24,6 +24,7 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class EazyStoreSecurityConfig {
 
     private final List<String> publicPaths;
+    private final Environment env;
 
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
@@ -81,7 +83,8 @@ public class EazyStoreSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        String frontendUrl = env.getProperty("frontend.url", "http://localhost:5173");
+        config.setAllowedOrigins(Arrays.asList(frontendUrl));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowCredentials(true);
